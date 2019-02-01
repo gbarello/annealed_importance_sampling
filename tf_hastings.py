@@ -71,6 +71,7 @@ def hastings(f,init,nstep,eps = .1,grad = -1,L = 10):
     #out should be shape [nstep,x_dim]
     return out[-1]#,f(out[-1])
 
+
 def AIS(f1,f2,f1sam,shape,n_samp,n_AIS_step,nhstep,eps = .1,grad = -1,L = 10,PRINT = False):
     #THESE ARE NEG LOG LIKELIHOODS
     beta = np.linspace(0,1,n_AIS_step + 1,dtype = np.float32)
@@ -98,7 +99,7 @@ def AIS(f1,f2,f1sam,shape,n_samp,n_AIS_step,nhstep,eps = .1,grad = -1,L = 10,PRI
     
     with tf.Session() as sess:
         sess.run(init)        
-        x,lw, = sess.run([result,lW])
+        x,lw = sess.run([result,lW])
     
     return x,lw
 
@@ -106,7 +107,8 @@ if __name__ == "__main__":
 
     import os
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-    
+    os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
     def prior(x,N):
         return - tf.reduce_sum(tf.abs(x),axis = 1) - N * np.float32(np.log(2))
 
@@ -134,14 +136,14 @@ if __name__ == "__main__":
 
     N = 200
     nsamp = 100
-    n_AIS_step = 10000
+    n_AIS_step = 100
     nhstep = 1
     eps = .05
     L = 10
 
     def prior_samp(a,b):
         return np.float32(np.random.laplace(0,1,[a,b]))
-
+    
     import time
     t1 = time.time()
     XO,W = AIS(fa,fb,prior_samp,N,n_samp = nsamp,n_AIS_step = n_AIS_step,nhstep = nhstep,eps = eps,grad = [ga,gb],L = L,PRINT = True)

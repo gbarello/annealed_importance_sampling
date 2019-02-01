@@ -105,6 +105,8 @@ def AIS(f1,f2,f1sam,shape,n_samp,n_AIS_step,nhstep,eps = .1,grad = -1,L = 10,PRI
 
 if __name__ == "__main__":
 
+        
+
     def prior(x,N):
         return - np.abs(x).sum(axis = 1) - N * np.log(2)
 
